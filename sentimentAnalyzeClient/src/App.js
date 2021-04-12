@@ -1,5 +1,6 @@
 import './bootstrap.min.css';
 import './App.css';
+import Config from './config.json';
 import EmotionTable from './EmotionTable.js';
 import React from 'react';
 import axios from 'axios';
@@ -36,7 +37,7 @@ class App extends React.Component {
   sendForSentimentAnalysis = () => {
     this.setState({sentiment:true});
     let ret = "";
-    let url = ".";
+    let url = Config.BASE_URL;
 
     if(this.state.mode === "url") {
       url = url+"/url/sentiment?url="+document.getElementById("textinput").value;
@@ -64,23 +65,23 @@ class App extends React.Component {
   sendForEmotionAnalysis = () => {
     this.setState({sentiment:false});
     let ret = "";
-    let url = ".";
+    let url = Config.BASE_URL;
     if(this.state.mode === "url") {
       url = url+"/url/emotion?url="+document.getElementById("textinput").value;
     } else {
-      url = url+"/text/emotion/?text="+document.getElementById("textinput").value;
+      url = url+"/text/emotion?text="+document.getElementById("textinput").value;
     }
     ret = axios.get(url);
-
     ret.then((response)=>{
       this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
-  });
+  }).catch(err => console.log(err));
   }
   
 
   render() {
     return (  
       <div className="App">
+          <h1>Sentiment Analizer</h1>
       <button className="btn btn-info" onClick={this.renderTextArea}>Text</button>
         <button className="btn btn-dark"  onClick={this.renderTextBox}>URL</button>
         <br/><br/>

@@ -1,0 +1,4 @@
+{
+  "ENV": "development",
+  "BASE_URL": "https://aureliomagno-8080.theiadocker-19.proxy.cognitiveclass.ai"
+}
