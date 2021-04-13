@@ -73,8 +73,12 @@ class App extends React.Component {
     }
     ret = axios.get(url);
     ret.then((response)=>{
-      this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
-  }).catch(err => console.log(err));
+        if (response.data === "Bad Request") {
+            this.setState({sentimentOutput: <p>Text cannot be empty.</p>});
+        } else {
+            this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
+        }
+    }).catch(err => console.log(err));
   }
   
 

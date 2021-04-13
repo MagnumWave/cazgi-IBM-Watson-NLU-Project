@@ -31,13 +31,60 @@ app.get("/",(req,res)=>{
   });
 
 app.get("/url/emotion", (req,res) => {
+    const analyzeParams = {
+        url: `${req.query.url}`,
+        features:{
+            'entities': {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 10,
+            },
+            'keywords': {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 10,
+            },
+            'emotion':{
+                'document':true
+            },
+        }
+    }
+
+    getNLUInstance().analyze(analyzeParams)
+        .then(resp => res.send(JSON.stringify(resp.result.emotion.document.emotion)))
+        .catch(err => res.send(JSON.stringify(err.statusText)));
     //console.log(req.query.url);
-    res.send(req.query.url);
+    //res.send(req.query.url);
 });
 
 app.get("/url/sentiment", (req,res) => {
+    //console.log(req.query.url);
+
+    const analyzeParams = {
+        url: `${req.query.url}`,
+        features:{
+            'entities': {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 10,
+            },
+            'keywords': {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 10,
+            },
+            'sentiment': {
+                'document': true,
+            },
+        }
+    }
+
+    getNLUInstance().analyze(analyzeParams)
+        .then(resp => res.send(resp.result.sentiment.document.label))
+        .catch(err => res.send("Invalid URL."));
     
-    return res.send("url sentiment for "+req.query.url);
+
+    //return res.send("url sentiment is: "+req.query.url);
 });
 
 app.get("/text/emotion", (req,res) => {
@@ -54,13 +101,16 @@ app.get("/text/emotion", (req,res) => {
             'sentiment': true,
             'limit': 10,
             },
+            'emotion':{
+                'document':true
+            },
         }
     }
 
     getNLUInstance().analyze(analyzeParams)
         .then(resp => {
-            JSON.stringify(resp.result, null, 2);
-            res.send(JSON.stringify(resp.result,null,2));
+            //console.log(JSON.stringify(resp.result.emotion.document.emotion, null, 2));
+            res.send(JSON.stringify(resp.result.emotion.document.emotion,null,2));
         })
         .catch(err => res.send(JSON.stringify(err.statusText)));
     
@@ -83,11 +133,14 @@ app.get("/text/sentiment", (req,res) => {
             'sentiment': true,
             'limit': 2,
             },
+            'sentiment': {
+                'document': true,
+            },
         }
     }
 
     getNLUInstance().analyze(analyzeParams)
-        .then(resp => res.send(resp.result.keywords[0].sentiment.label))
+        .then(resp => res.send(resp.result.sentiment.document.label))
         .catch(err => {
             if (err.statusText == 'Bad Request') {
                 res.send('Text cannot be empty.')
